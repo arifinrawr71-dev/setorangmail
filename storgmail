@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setor Gmail - Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,sans-serif;
+  background:#0b1020;
+  color:white;
+  min-height:100vh;
+}
+header{
+  padding:20px;
+  background:#141c31;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{font-size:22px;font-weight:bold;color:#55e6a5}
+.container{max-width:900px;margin:30px auto;padding:15px}
+.card{
+  background:#172139;
+  border:1px solid #293752;
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:20px;
+}
+h2{font-size:20px;margin-bottom:15px}
+p{color:#aab6cc;font-size:14px;line-height:1.6}
+.balance{
+  background:linear-gradient(120deg,#087f60,#16b982);
+  padding:25px;border-radius:15px;
+  margin-bottom:20px;
+}
+.balance h1{font-size:32px;margin-top:10px}
+input{
+  width:100%;padding:14px;
+  border:1px solid #394968;
+  background:#0e172a;color:white;
+  border-radius:9px;margin:10px 0;
+}
+button{
+  padding:13px 18px;
+  border:0;border-radius:9px;
+  background:#16bd82;color:#061b13;
+  font-weight:bold;cursor:pointer;
+}
+button:hover{opacity:.85}
+.full{width:100%}
+.stat{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;margin-bottom:20px;
+}
+.stat .card{margin:0}
+.price{color:#55e6a5;font-size:24px;font-weight:bold}
+.hidden{display:none}
+table{width:100%;border-collapse:collapse}
+td,th{
+  text-align:left;padding:12px 5px;
+  border-bottom:1px solid #34405a;
+  font-size:13px;
+}
+.pending{color:#ffca66}
+.success{color:#55e6a5}
+footer{text-align:center;color:#73809a;padding:30px}
+@media(max-width:500px){
+ .stat{grid-template-columns:1fr 1fr}
+ .container{margin:15px auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SETOR GMAIL</div>
+  <span>Dashboard</span>
+</header>
+
+<div class="container">
+
+<section id="auth" class="card">
+  <h2 id="authTitle">Selamat Datang</h2>
+  <p>Login atau daftar untuk melihat dashboard.</p>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password"
+  placeholder="Password">
+  <button class="full" onclick="login()">Login</button>
+  <p style="margin-top:15px">
+    Belum punya akun?
+    <a href="#" onclick="toggleAuth()" style="color:#55e6a5">Daftar</a>
+  </p>
+</section>
+
+<section id="dashboard" class="hidden">
+
+<div class="balance">
+  <p>Saldo kamu</p>
+  <h1 id="saldo">Rp0</h1>
+  <p>Saldo dari pengajuan yang disetujui.</p>
+</div>
+
+<div class="stat">
+  <div class="card">
+    <p>Harga per email</p>
+    <div class="price">Rp4.000</div>
+  </div>
+  <div class="card">
+    <p>Total pengajuan</p>
+    <div class="price" id="total">0</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Setor Email</h2>
+  <p>Ajukan alamat email yang kamu miliki dan bersedia kamu daftarkan. Admin akan melakukan pemeriksaan.</p>
+  <input id="email" type="email"
+  placeholder="Masukkan alamat email">
+  <button class="full" onclick="submitEmail()">
+    Kirim Pengajuan
+  </button>
+  <p style="margin-top:12px">
+    Setiap pengajuan yang memenuhi ketentuan:
+    <b style="color:#55e6a5">Rp4.000</b>
+  </p>
+  <p>Jangan kirim password, OTP, atau kode pemulihan.</p>
+</div>
+
+<div class="card">
+  <h2>Riwayat Pengajuan</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Harga</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="history">
+      <tr><td colspan="3">Belum ada pengajuan.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<button onclick="logout()" style="background:#e85d65;color:white">
+  Logout
+</button>
+
+</section>
+</div>
+
+<footer>© 2026 Setor Gmail</footer>
+
+<script>
+let registered = false;
+let balance = 0;
+let submissions = [];
+
+function toggleAuth(){
+  registered = !registered;
+  document.getElementById("authTitle").innerText =
+    registered ? "Buat Akun Baru" : "Selamat Datang";
+}
+
+function login(){
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  if(!user || !pass){
+    alert("Lengkapi username dan password.");
+    return;
+  }
+
+  alert("Ini hanya demo tampilan. Login asli membutuhkan backend.");
+}
+
+function logout(){
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("auth").classList.remove("hidden");
+}
+
+function submitEmail(){
+  let email = document.getElementById("email").value;
+
+  if(!email || !email.includes("@")){
+    alert("Masukkan email yang valid.");
+    return;
+  }
+
+  if(submissions.includes(email)){
+    alert("Email sudah diajukan.");
+    return;
+  }
+
+  submissions.push(email);
+
+  document.getElementById("total").innerText =
+    submissions.length;
+
+  let row = document.createElement("tr");
+
+  let address = document.createElement("td");
+  address.textContent = email;
+
+  let price = document.createElement("td");
+  price.textContent = "Rp4.000";
+
+  let status = document.createElement("td");
+  status.textContent = "Menunggu";
+  status.className = "pending";
+
+  row.append(address,price,status);
+
+  let history = document.getElementById("history");
+  if(submissions.length === 1) history.innerHTML = "";
+  history.appendChild(row);
+
+  document.getElementById("email").value = "";
+  alert("Pengajuan berhasil dibuat. Menunggu pemeriksaan admin.");
+}
+</script>
+</body>
+</html>
